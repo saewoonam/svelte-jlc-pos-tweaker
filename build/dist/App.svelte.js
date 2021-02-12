@@ -10,7 +10,6 @@ import {
 	noop,
 	safe_not_equal,
 	set_data,
-	space,
 	text
 } from "../_snowpack/pkg/svelte/internal.js";
 
@@ -18,40 +17,32 @@ import { onMount } from "../_snowpack/pkg/svelte.js";
 
 function create_fragment(ctx) {
 	let div;
-	let header;
-	let t1;
 	let p;
-	let t2;
+	let t0;
 	let code;
-	let t3;
-	let t4;
+	let t1;
+	let t2;
 
 	return {
 		c() {
 			div = element("div");
-			header = element("header");
-			header.innerHTML = `<a class="App-link" href="https://svelte.dev" target="_blank" rel="noopener noreferrer">Learn Svelte web page</a>`;
-			t1 = space();
 			p = element("p");
-			t2 = text("Page has been open for ");
+			t0 = text("Page has been open for ");
 			code = element("code");
-			t3 = text(/*count*/ ctx[0]);
-			t4 = text(" seconds.");
-			attr(header, "class", "App-header");
+			t1 = text(/*count*/ ctx[0]);
+			t2 = text(" seconds.");
 			attr(div, "class", "App");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
-			append(div, header);
-			append(div, t1);
 			append(div, p);
-			append(p, t2);
+			append(p, t0);
 			append(p, code);
-			append(code, t3);
-			append(p, t4);
+			append(code, t1);
+			append(p, t2);
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*count*/ 1) set_data(t3, /*count*/ ctx[0]);
+			if (dirty & /*count*/ 1) set_data(t1, /*count*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
