@@ -33,6 +33,13 @@ function element(name) {
 function text(data) {
     return document.createTextNode(data);
 }
+function space() {
+    return text(' ');
+}
+function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+}
 function attr(node, attribute, value) {
     if (value == null)
         node.removeAttribute(attribute);
@@ -252,4 +259,4 @@ class SvelteComponent {
     }
 }
 
-export { SvelteComponent as S, append as a, attr as b, insert as c, detach as d, element as e, set_data as f, init as i, noop as n, onMount as o, safe_not_equal as s, text as t };
+export { SvelteComponent as S, append as a, attr as b, insert as c, detach as d, element as e, set_data as f, space as g, init as i, listen as l, noop as n, onMount as o, run_all as r, safe_not_equal as s, text as t };

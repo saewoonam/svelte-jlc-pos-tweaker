@@ -7,9 +7,12 @@ import {
 	element,
 	init,
 	insert,
+	listen,
 	noop,
+	run_all,
 	safe_not_equal,
 	set_data,
+	space,
 	text
 } from "../_snowpack/pkg/svelte/internal.js";
 
@@ -22,6 +25,14 @@ function create_fragment(ctx) {
 	let code;
 	let t1;
 	let t2;
+	let t3;
+	let button0;
+	let t5;
+	let button1;
+	let t7;
+	let button2;
+	let mounted;
+	let dispose;
 
 	return {
 		c() {
@@ -31,6 +42,15 @@ function create_fragment(ctx) {
 			code = element("code");
 			t1 = text(/*count*/ ctx[0]);
 			t2 = text(" seconds.");
+			t3 = space();
+			button0 = element("button");
+			button0.textContent = "google file picker";
+			t5 = space();
+			button1 = element("button");
+			button1.textContent = "google directory picker";
+			t7 = space();
+			button2 = element("button");
+			button2.textContent = "update console";
 			attr(div, "class", "App");
 		},
 		m(target, anchor) {
@@ -40,6 +60,22 @@ function create_fragment(ctx) {
 			append(p, code);
 			append(code, t1);
 			append(p, t2);
+			insert(target, t3, anchor);
+			insert(target, button0, anchor);
+			insert(target, t5, anchor);
+			insert(target, button1, anchor);
+			insert(target, t7, anchor);
+			insert(target, button2, anchor);
+
+			if (!mounted) {
+				dispose = [
+					listen(button0, "click", /*google_file_picker*/ ctx[1]),
+					listen(button1, "click", google_directory_picker),
+					listen(button2, "click", /*update*/ ctx[2])
+				];
+
+				mounted = true;
+			}
 		},
 		p(ctx, [dirty]) {
 			if (dirty & /*count*/ 1) set_data(t1, /*count*/ ctx[0]);
@@ -48,14 +84,61 @@ function create_fragment(ctx) {
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div);
+			if (detaching) detach(t3);
+			if (detaching) detach(button0);
+			if (detaching) detach(t5);
+			if (detaching) detach(button1);
+			if (detaching) detach(t7);
+			if (detaching) detach(button2);
+			mounted = false;
+			run_all(dispose);
 		}
 	};
 }
 
+async function google_directory_picker(event) {
+	let fileHandle;
+
+	// [fileHandle] = await window.showOpenFilePicker();
+	// console.log(fileHandle)
+	const dirHandle = await window.showDirectoryPicker();
+
+	for await (const entry of dirHandle.values()) {
+		// console.log('entry', entry)
+		if (entry.name.endsWith("-pos.csv")) {
+			console.log(entry.kind, entry.name);
+		}
+	}
+
+	console.log(dirHandle);
+}
+
 function instance($$self, $$props, $$invalidate) {
+	let papa;
+	let corrections;
 	let count = 0;
 
-	onMount(() => {
+	onMount(async () => {
+		papa = await import("../_snowpack/pkg/papaparse.js");
+
+		papa.parse("corrections.csv", {
+			download: true,
+			complete(results, file) {
+				console.log("Parsing complete:", results, file);
+				corrections = {};
+
+				for (const row of results.data) {
+					console.log("row", row);
+
+					if (row.length > 1) {
+						corrections[row[0]] = row.slice(1).map(s => s.trim());
+					}
+				}
+
+				console.log("corrections", corrections);
+			}
+		}); // quoteChar: '',
+
 		const interval = setInterval(() => $$invalidate(0, count++, count), 1000);
 
 		return () => {
@@ -63,7 +146,45 @@ function instance($$self, $$props, $$invalidate) {
 		};
 	});
 
-	return [count];
+	const handle = promise => {
+		return promise.then(data => [data, undefined]).catch(error => Promise.resolve([undefined, error]));
+	};
+
+	/* component logic will go here */
+	async function google_file_picker(event) {
+		let fileHandle, error;
+
+		let options = {
+			types: [
+				{
+					description: "Text Files",
+					accept: { "text/csv": [".csv"] }
+				}
+			]
+		};
+
+		console.log(options);
+		[fileHandle, error] = await handle(window.showOpenFilePicker(options));
+
+		if (fileHandle) {
+			fileHandle = fileHandle[0];
+			console.log("Got file", fileHandle);
+			const file = await fileHandle.getFile();
+			const contents = await file.text();
+			console.log(contents);
+			console.log(papa);
+			console.log(papa.parse);
+			console.log(papa.parse(contents, { quoteChar: "" }));
+		} else {
+			throw error;
+		}
+	}
+
+	function update() {
+		console.log("corrections", corrections);
+	}
+
+	return [count, google_file_picker, update];
 }
 
 class App extends SvelteComponent {
