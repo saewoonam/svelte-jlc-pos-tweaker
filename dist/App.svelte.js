@@ -19,52 +19,59 @@ import {
 import { onMount } from "../_snowpack/pkg/svelte.js";
 
 function create_fragment(ctx) {
+	let h1;
+	let t1;
 	let div;
 	let p;
-	let t0;
-	let code;
-	let t1;
 	let t2;
+	let code;
 	let t3;
-	let button0;
+	let t4;
 	let t5;
-	let button1;
+	let button0;
 	let t7;
+	let button1;
+	let t9;
 	let button2;
 	let mounted;
 	let dispose;
 
 	return {
 		c() {
+			h1 = element("h1");
+			h1.textContent = "JLC pos tweaker";
+			t1 = space();
 			div = element("div");
 			p = element("p");
-			t0 = text("Page has been open for ");
+			t2 = text("Page has been open for ");
 			code = element("code");
-			t1 = text(/*count*/ ctx[0]);
-			t2 = text(" seconds.");
-			t3 = space();
+			t3 = text(/*count*/ ctx[0]);
+			t4 = text(" seconds.");
+			t5 = space();
 			button0 = element("button");
 			button0.textContent = "google file picker";
-			t5 = space();
+			t7 = space();
 			button1 = element("button");
 			button1.textContent = "google directory picker";
-			t7 = space();
+			t9 = space();
 			button2 = element("button");
 			button2.textContent = "update console";
 			attr(div, "class", "App");
 		},
 		m(target, anchor) {
+			insert(target, h1, anchor);
+			insert(target, t1, anchor);
 			insert(target, div, anchor);
 			append(div, p);
-			append(p, t0);
-			append(p, code);
-			append(code, t1);
 			append(p, t2);
-			insert(target, t3, anchor);
-			insert(target, button0, anchor);
+			append(p, code);
+			append(code, t3);
+			append(p, t4);
 			insert(target, t5, anchor);
-			insert(target, button1, anchor);
+			insert(target, button0, anchor);
 			insert(target, t7, anchor);
+			insert(target, button1, anchor);
+			insert(target, t9, anchor);
 			insert(target, button2, anchor);
 
 			if (!mounted) {
@@ -78,17 +85,19 @@ function create_fragment(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*count*/ 1) set_data(t1, /*count*/ ctx[0]);
+			if (dirty & /*count*/ 1) set_data(t3, /*count*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
 		d(detaching) {
+			if (detaching) detach(h1);
+			if (detaching) detach(t1);
 			if (detaching) detach(div);
-			if (detaching) detach(t3);
-			if (detaching) detach(button0);
 			if (detaching) detach(t5);
-			if (detaching) detach(button1);
+			if (detaching) detach(button0);
 			if (detaching) detach(t7);
+			if (detaching) detach(button1);
+			if (detaching) detach(t9);
 			if (detaching) detach(button2);
 			mounted = false;
 			run_all(dispose);
