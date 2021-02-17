@@ -1,3 +1,18 @@
+# This is a single page webapp to tweak the pos file for assembly by jlc. 
+This project is built using svelte and the snowpack template.  It is running as a github-page
+## notes:
+1.  The positions are modified if they part and footprint are in the public/corrections.csv file.  This needs to be updated for missing parts.
+
+## local installation notes:
+*  Follow instructions below... It should just run with "npm start" or "yarn start"
+*  Edit public/corrections.csv to update new positions.
+    *  May need to restart to load new corrections.
+
+## To do:
+1.  Implement a github action to update the corrections.csv file by submitting an issue...
+
+---
+
 # New Project
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).

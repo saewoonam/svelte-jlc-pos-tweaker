@@ -9,7 +9,6 @@ import {
 	insert,
 	listen,
 	noop,
-	run_all,
 	safe_not_equal,
 	set_data,
 	space,
@@ -21,88 +20,113 @@ import { onMount } from "../_snowpack/pkg/svelte.js";
 function create_fragment(ctx) {
 	let h1;
 	let t1;
-	let div;
-	let p;
-	let t2;
-	let code;
+	let p0;
 	let t3;
+	let br;
 	let t4;
-	let t5;
-	let button0;
+	let button;
+	let t6;
+	let p1;
 	let t7;
-	let button1;
+	let div;
+	let p2;
+	let t8;
+	let code;
 	let t9;
-	let button2;
+	let t10;
 	let mounted;
 	let dispose;
 
 	return {
 		c() {
 			h1 = element("h1");
-			h1.textContent = "JLC pos tweaker";
+			h1.textContent = "Tweak KICAD pos file for JLC assembly";
 			t1 = space();
-			div = element("div");
-			p = element("p");
-			t2 = text("Page has been open for ");
-			code = element("code");
-			t3 = text(/*count*/ ctx[0]);
-			t4 = text(" seconds.");
-			t5 = space();
-			button0 = element("button");
-			button0.textContent = "google file picker";
+			p0 = element("p");
+			p0.textContent = "Click button below to select pos file to modify, \nit will then ask you to save the tweaked file";
+			t3 = space();
+			br = element("br");
+			t4 = space();
+			button = element("button");
+			button.textContent = "google file picker";
+			t6 = space();
+			p1 = element("p");
 			t7 = space();
-			button1 = element("button");
-			button1.textContent = "google directory picker";
-			t9 = space();
-			button2 = element("button");
-			button2.textContent = "update console";
+			div = element("div");
+			p2 = element("p");
+			t8 = text("Page has been open for ");
+			code = element("code");
+			t9 = text(/*count*/ ctx[0]);
+			t10 = text(" seconds.");
 			attr(div, "class", "App");
 		},
 		m(target, anchor) {
 			insert(target, h1, anchor);
 			insert(target, t1, anchor);
-			insert(target, div, anchor);
-			append(div, p);
-			append(p, t2);
-			append(p, code);
-			append(code, t3);
-			append(p, t4);
-			insert(target, t5, anchor);
-			insert(target, button0, anchor);
+			insert(target, p0, anchor);
+			insert(target, t3, anchor);
+			insert(target, br, anchor);
+			insert(target, t4, anchor);
+			insert(target, button, anchor);
+			insert(target, t6, anchor);
+			insert(target, p1, anchor);
 			insert(target, t7, anchor);
-			insert(target, button1, anchor);
-			insert(target, t9, anchor);
-			insert(target, button2, anchor);
+			insert(target, div, anchor);
+			append(div, p2);
+			append(p2, t8);
+			append(p2, code);
+			append(code, t9);
+			append(p2, t10);
 
 			if (!mounted) {
-				dispose = [
-					listen(button0, "click", /*google_file_picker*/ ctx[1]),
-					listen(button1, "click", google_directory_picker),
-					listen(button2, "click", /*update*/ ctx[2])
-				];
-
+				dispose = listen(button, "click", /*google_file_picker*/ ctx[1]);
 				mounted = true;
 			}
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*count*/ 1) set_data(t3, /*count*/ ctx[0]);
+			if (dirty & /*count*/ 1) set_data(t9, /*count*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(h1);
 			if (detaching) detach(t1);
-			if (detaching) detach(div);
-			if (detaching) detach(t5);
-			if (detaching) detach(button0);
+			if (detaching) detach(p0);
+			if (detaching) detach(t3);
+			if (detaching) detach(br);
+			if (detaching) detach(t4);
+			if (detaching) detach(button);
+			if (detaching) detach(t6);
+			if (detaching) detach(p1);
 			if (detaching) detach(t7);
-			if (detaching) detach(button1);
-			if (detaching) detach(t9);
-			if (detaching) detach(button2);
+			if (detaching) detach(div);
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
+}
+
+function rotate(data, angle) {
+	// console.log('rotate', data, typeof(angle))
+	data[5] = Number(data[5]) + Number(angle);
+
+	data[5] %= 360;
+	return data;
+}
+
+async function getNewFileHandle() {
+	const options = {
+		types: [
+			{
+				description: "CSV position files",
+				accept: { "text/csv": [".csv"] },
+				suggestedName: "name.csv"
+			}
+		]
+	};
+
+	const handle = await window.showSaveFilePicker(options);
+	return handle;
 }
 
 async function google_directory_picker(event) {
@@ -159,7 +183,34 @@ function instance($$self, $$props, $$invalidate) {
 		return promise.then(data => [data, undefined]).catch(error => Promise.resolve([undefined, error]));
 	};
 
-	/* component logic will go here */
+	function tweak(parsed) {
+		let idx = 0;
+
+		for (let name of parsed[0]) {
+			// console.log(name)
+			name = name.replace("PosX", "Mid X");
+
+			name = name.replace("PosY", "Mid Y");
+			name = name.replace("Ref", "Designator");
+			name = name.replace("Rot", "Rotation");
+			name = name.replace("Side", "Layer");
+			parsed[0][idx] = name;
+			idx = idx + 1;
+		} // console.log(name);
+
+		console.log(parsed[0]);
+
+		for (let data of parsed) {
+			if (data[1] in corrections) {
+				let [footprint, angle] = corrections[data[1]];
+
+				if (data[2] == footprint) {
+					data = rotate(data, angle);
+				}
+			}
+		}
+	}
+
 	async function google_file_picker(event) {
 		let fileHandle, error;
 
@@ -180,10 +231,17 @@ function instance($$self, $$props, $$invalidate) {
 			console.log("Got file", fileHandle);
 			const file = await fileHandle.getFile();
 			const contents = await file.text();
-			console.log(contents);
-			console.log(papa);
-			console.log(papa.parse);
-			console.log(papa.parse(contents, { quoteChar: "" }));
+			console.log("contents\n", contents);
+			let options = { quoteChar: "\"" };
+			let parsed = papa.parse(contents, options);
+			console.log("parsed", parsed);
+			tweak(parsed.data);
+			console.log("tweaked", parsed);
+			console.log("unparsed\n", papa.unparse(parsed));
+			fileHandle = await getNewFileHandle();
+			const writable = await fileHandle.createWritable();
+			await writable.write(papa.unparse(parsed));
+			await writable.close();
 		} else {
 			throw error;
 		}
@@ -193,7 +251,7 @@ function instance($$self, $$props, $$invalidate) {
 		console.log("corrections", corrections);
 	}
 
-	return [count, google_file_picker, update];
+	return [count, google_file_picker];
 }
 
 class App extends SvelteComponent {

@@ -132,6 +132,7 @@
 Click button below to select pos file to modify, 
 it will then ask you to save the tweaked file
 </p>
+<h2> Must use google chrome... I used a file picker that only works in chrome... </h2>
 <br>
 <button on:click={google_file_picker}> google file picker </button>
  <!--
