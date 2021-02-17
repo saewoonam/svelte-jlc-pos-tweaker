@@ -25,6 +25,7 @@ module.exports = {
     /* ... */
   },
   buildOptions: {
+          clean: false, /*  try not to erase .nojekyll file */
     /* ... */
   },
 };

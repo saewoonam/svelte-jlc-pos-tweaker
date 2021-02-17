@@ -8,7 +8,9 @@ This project is built using svelte and the snowpack template.  It is running as 
 *  Edit public/corrections.csv to update new positions.
     *  May need to restart to load new corrections.
 *  Have to deploy to gihub pages manually...
-    *  yarn run gh-pages -t -d public
+    *  yarn build
+    *  touch build/.nojekyll  # can't seem to prevent snowpack from erasing this file every time...
+    *  yarn run gh-pages -t -d build
     *  "use -t" to copy the dotfile .nojekyll so that all the snowpack stuff will get picked up by github-pages
 ## To do:
 1.  Implement a github action to update the corrections.csv file by submitting an issue...
