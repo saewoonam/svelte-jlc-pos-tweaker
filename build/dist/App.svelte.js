@@ -22,18 +22,20 @@ function create_fragment(ctx) {
 	let t1;
 	let p0;
 	let t3;
+	let h2;
+	let t5;
 	let br;
-	let t4;
-	let button;
 	let t6;
+	let button;
+	let t8;
 	let p1;
-	let t7;
+	let t9;
 	let div;
 	let p2;
-	let t8;
-	let code;
-	let t9;
 	let t10;
+	let code;
+	let t11;
+	let t12;
 	let mounted;
 	let dispose;
 
@@ -45,19 +47,22 @@ function create_fragment(ctx) {
 			p0 = element("p");
 			p0.textContent = "Click button below to select pos file to modify, \nit will then ask you to save the tweaked file";
 			t3 = space();
+			h2 = element("h2");
+			h2.textContent = "Must use google chrome... I used a file picker that only works in chrome...";
+			t5 = space();
 			br = element("br");
-			t4 = space();
+			t6 = space();
 			button = element("button");
 			button.textContent = "google file picker";
-			t6 = space();
+			t8 = space();
 			p1 = element("p");
-			t7 = space();
+			t9 = space();
 			div = element("div");
 			p2 = element("p");
-			t8 = text("Page has been open for ");
+			t10 = text("Page has been open for ");
 			code = element("code");
-			t9 = text(/*count*/ ctx[0]);
-			t10 = text(" seconds.");
+			t11 = text(/*count*/ ctx[0]);
+			t12 = text(" seconds.");
 			attr(div, "class", "App");
 		},
 		m(target, anchor) {
@@ -65,18 +70,20 @@ function create_fragment(ctx) {
 			insert(target, t1, anchor);
 			insert(target, p0, anchor);
 			insert(target, t3, anchor);
+			insert(target, h2, anchor);
+			insert(target, t5, anchor);
 			insert(target, br, anchor);
-			insert(target, t4, anchor);
-			insert(target, button, anchor);
 			insert(target, t6, anchor);
+			insert(target, button, anchor);
+			insert(target, t8, anchor);
 			insert(target, p1, anchor);
-			insert(target, t7, anchor);
+			insert(target, t9, anchor);
 			insert(target, div, anchor);
 			append(div, p2);
-			append(p2, t8);
-			append(p2, code);
-			append(code, t9);
 			append(p2, t10);
+			append(p2, code);
+			append(code, t11);
+			append(p2, t12);
 
 			if (!mounted) {
 				dispose = listen(button, "click", /*google_file_picker*/ ctx[1]);
@@ -84,7 +91,7 @@ function create_fragment(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*count*/ 1) set_data(t9, /*count*/ ctx[0]);
+			if (dirty & /*count*/ 1) set_data(t11, /*count*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
@@ -93,12 +100,14 @@ function create_fragment(ctx) {
 			if (detaching) detach(t1);
 			if (detaching) detach(p0);
 			if (detaching) detach(t3);
+			if (detaching) detach(h2);
+			if (detaching) detach(t5);
 			if (detaching) detach(br);
-			if (detaching) detach(t4);
-			if (detaching) detach(button);
 			if (detaching) detach(t6);
+			if (detaching) detach(button);
+			if (detaching) detach(t8);
 			if (detaching) detach(p1);
-			if (detaching) detach(t7);
+			if (detaching) detach(t9);
 			if (detaching) detach(div);
 			mounted = false;
 			dispose();
