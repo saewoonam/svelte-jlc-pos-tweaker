@@ -37,6 +37,7 @@
     // console.log('rotate', data, typeof(angle))
     data[5] = Number(data[5]) + Number(angle)
     data[5] %= 360;
+    console.log('rotated', data)
     return data
   }
   function tweak(parsed) {
